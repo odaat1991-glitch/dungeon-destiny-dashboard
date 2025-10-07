@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dungeon Destiny - Phase 2 Development Dashboard</title>
+    <meta name="description" content="Interactive development management dashboard for Dungeon Destiny tabletop RPG Phase 2 implementation">
+    <meta name="author" content="Martin Acosta">
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/x-icon" href="assets/images/favicon.ico">
+</head>
+<body>
+    <!-- Loading Screen -->
+    <div id="loadingScreen" class="loading-screen">
+        <div class="loading-content">
+            <div class="loading-logo">⚔️</div>
+            <h2>Dungeon Destiny</h2>
+            <p>Loading Phase 2 Development Dashboard...</p>
+            <div class="loading-bar">
+                <div class="loading-progress"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sidebar Navigation -->
+    <nav class="sidebar">
+        <div class="sidebar-header">
+            <div class="logo">⚔️</div>
+            <div class="title-section">
+                <h2>Dungeon Destiny</h2>
+                <span class="phase-badge">Phase 2</span>
+            </div>
+        </div>
+        <ul class="nav-menu">
+            <li><a href="#dashboard" class="nav-link active" data-section="dashboard">
+                <span class="material-icons">dashboard</span>
+                <span class="nav-text">Overview</span>
+            </a></li>
+            <li><a href="#tasks" class="nav-link" data-section="tasks">
+                <span class="material-icons">task</span>
+                <span class="nav-text">Task Management</span>
+            </a></li>
+            <li><a href="#character" class="nav-link" data-section="character">
+                <span class="material-icons">person</span>
+                <span class="nav-text">Character Creation</span>
+            </a></li>
+            <li><a href="#equipment" class="nav-link" data-section="equipment">
+                <span class="material-icons">shield</span>
+                <span class="nav-text">Equipment Database</span>
+            </a></li>
+            <li><a href="#timeline" class="nav-link" data-section="timeline">
+                <span class="material-icons">timeline</span>
+                <span class="nav-text">Development Timeline</span>
+            </a></li>
+            <li><a href="#playtesting" class="nav-link" data-section="playtesting">
+                <span class="material-icons">bug_report</span>
+                <span class="nav-text">Playtesting Tracker</span>
+            </a></li>
+            <li><a href="#documentation" class="nav-link" data-section="documentation">
+                <span class="material-icons">description</span>
+                <span class="nav-text">Documentation Hub</span>
+            </a></li>
+        </ul>
+
+        <!-- Save System UI -->
+        <div class="save-controls">
+            <div class="save-title">Project Saves</div>
+            <div class="save-buttons">
+                <button id="saveBtn" class="save-btn save" title="Save Progress (Ctrl+S)">
+                    <span class="material-icons">save</span>
+                </button>
+                <button id="loadBtn" class="save-btn load" title="Load Saved Data">
+                    <span class="material-icons">folder_open</span>
+                </button>
+                <button id="exportBtn" class="save-btn export" title="Export Backup">
+                    <span class="material-icons">download</span>
+                </button>
+                <label for="importFile" class="save-btn import" title="Import Backup">
+                    <span class="material-icons">upload</span>
+                </label>
+                <input type="file" id="importFile" accept=".json" style="display: none;">
+            </div>
+            <div class="save-status" id="saveStatus">Ready</div>
+            <div class="auto-save-indicator" id="autoSaveStatus">Auto-save: ON</div>
+        </div>
+    </nav>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+        <!-- Dynamic content sections will be loaded here -->
+        <div id="contentArea">
+            <!-- Content loads via JavaScript -->
+        </div>
+    </main>
+
+    <!-- Notification Container -->
+    <div id="notificationContainer"></div>
+
+    <!-- Scripts -->
+    <script src="assets/js/gameData.js"></script>
+    <script src="assets/js/saveSystem.js"></script>
+    <script src="assets/js/dashboard.js"></script>
+    <script src="assets/js/characterCreator.js"></script>
+    <script src="assets/js/taskManager.js"></script>
+    <script src="assets/js/equipmentDatabase.js"></script>
+    <script src="assets/js/main.js"></script>
+</body>
+</html>
