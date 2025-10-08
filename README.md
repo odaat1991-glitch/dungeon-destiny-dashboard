@@ -8,7 +8,7 @@
 
 ## 🌟 Live Dashboard
 
-**Access the live dashboard here:** [https://odaat1991.github.io/dungeon-destiny-dashboard/](https://odaat1991.github.io/dungeon-destiny-dashboard/)
+**Access the live dashboard here:** [https://odaat1991-glitch.github.io/dungeon-destiny-dashboard/](https://odaat1991-glitch.github.io/dungeon-destiny-dashboard/)
 
 ## 📋 Project Overview
 
