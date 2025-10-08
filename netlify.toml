@@ -1,0 +1,16 @@
+[build]
+  publish = "_site"
+  command = "bundle exec jekyll build"
+
+[build.environment]
+  RUBY_VERSION = "3.3.6"
+  BUNDLER_VERSION = "2.6.2"
+
+[context.production]
+  command = "bundle install && bundle exec jekyll build"
+
+[context.deploy-preview]
+  command = "bundle install && bundle exec jekyll build --future"
+
+[context.branch-deploy]
+  command = "bundle install && bundle exec jekyll build --future"
