@@ -10,76 +10,6 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="icon" type="image/x-icon" href="assets/images/favicon.ico">
-    <style>
-        /* Basic fallback styles */
-        .dashboard-basic {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1rem;
-            margin: 2rem 0;
-        }
-        .metric-card {
-            background: #2a2d3a;
-            padding: 1.5rem;
-            border-radius: 8px;
-            text-align: center;
-            border-left: 4px solid #8b5cf6;
-        }
-        .metric-value {
-            font-size: 2rem;
-            font-weight: bold;
-            color: #f8fafc;
-            margin: 0.5rem 0;
-        }
-        .task-board-basic {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1rem;
-            margin: 2rem 0;
-        }
-        .task-column {
-            background: #2a2d3a;
-            padding: 1rem;
-            border-radius: 8px;
-        }
-        .task-item {
-            background: #374151;
-            padding: 0.75rem;
-            margin: 0.5rem 0;
-            border-radius: 6px;
-            color: #f8fafc;
-        }
-        .debug-info {
-            background: #1f2937;
-            padding: 1rem;
-            border-radius: 8px;
-            margin: 2rem 0;
-            border: 1px solid #374151;
-        }
-        .btn {
-            padding: 0.5rem 1rem;
-            margin: 0.25rem;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-weight: 500;
-        }
-        .btn-primary {
-            background: #8b5cf6;
-            color: white;
-        }
-        .btn-secondary {
-            background: #6b7280;
-            color: white;
-        }
-        .fade-in {
-            animation: fadeIn 0.5s ease-in;
-        }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-    </style>
 </head>
 <body>
     <!-- Loading Screen -->
@@ -161,10 +91,7 @@
     <main class="main-content">
         <!-- Dynamic content sections will be loaded here -->
         <div id="contentArea">
-            <div class="fade-in">
-                <h1>🎮 Loading Dashboard...</h1>
-                <p>Please wait while we initialize the development interface.</p>
-            </div>
+            <!-- Content loads via JavaScript -->
         </div>
     </main>
 
@@ -179,6 +106,5 @@
     <script src="assets/js/taskManager.js"></script>
     <script src="assets/js/equipmentDatabase.js"></script>
     <script src="assets/js/main.js"></script>
-    <script src="assets/js/debug.js"></script>
 </body>
 </html>
