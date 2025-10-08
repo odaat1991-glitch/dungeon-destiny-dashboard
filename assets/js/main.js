@@ -14,10 +14,13 @@ class DungeonDestinyApp {
         try {
             // Remove loading screen after short delay
             setTimeout(() => {
-                document.getElementById('loadingScreen').style.opacity = '0';
-                setTimeout(() => {
-                    document.getElementById('loadingScreen').style.display = 'none';
-                }, 500);
+                const loadingScreen = document.getElementById('loadingScreen');
+                if (loadingScreen) {
+                    loadingScreen.style.opacity = '0';
+                    setTimeout(() => {
+                        loadingScreen.style.display = 'none';
+                    }, 500);
+                }
             }, 1500);
 
             // Initialize save system
@@ -382,11 +385,16 @@ class DungeonDestinyApp {
             </div>
         `;
 
-        // Initialize the actual task manager
-        const taskBoard = document.getElementById('taskBoard');
-        if (window.taskManager && taskBoard) {
-            taskManager.init(taskBoard);
-        }
+        // Initialize the task manager properly
+        setTimeout(() => {
+            const taskBoard = document.getElementById('taskBoard');
+            if (taskBoard && window.taskManager) {
+                window.taskManager.init(taskBoard);
+            } else {
+                console.error('Task manager or task board not found');
+                taskBoard.innerHTML = '<p>⚠️ Task manager failed to load. Please refresh the page.</p>';
+            }
+        }, 100);
     }
 
     renderCharacterCreation(container) {
@@ -394,17 +402,39 @@ class DungeonDestinyApp {
             <div class="fade-in">
                 <h1>🧙‍♂️ Character Creation</h1>
                 <p>Create and test characters using the Dungeon Destiny system.</p>
-                <div id="characterCreator" class="character-creator">
-                    <!-- Character creator will be rendered here -->
+                <div class="character-creator-container">
+                    <div class="race-selection">
+                        <h3>Choose Your Race</h3>
+                        <div class="race-grid">
+                            ${Object.entries(gameData.races).map(([raceName, race]) => `
+                                <div class="race-card">
+                                    <h4>${raceName}</h4>
+                                    <p>${race.description}</p>
+                                    <div class="traits">
+                                        ${race.traits.map(trait => `<span class="trait-tag">${trait}</span>`).join('')}
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                    <div class="class-selection">
+                        <h3>Choose Your Class</h3>
+                        <div class="class-grid">
+                            ${Object.entries(gameData.classes).map(([className, classData]) => `
+                                <div class="class-card">
+                                    <h4>${className}</h4>
+                                    <p class="class-role">${classData.role}</p>
+                                    <p>${classData.description}</p>
+                                    <div class="abilities">
+                                        ${classData.special_abilities.map(ability => `<span class="ability-tag">${ability}</span>`).join('')}
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
                 </div>
             </div>
         `;
-
-        // Initialize character creator if available
-        const creatorContainer = document.getElementById('characterCreator');
-        if (window.characterCreator && creatorContainer) {
-            characterCreator.init(creatorContainer);
-        }
     }
 
     renderEquipmentDatabase(container) {
@@ -412,17 +442,56 @@ class DungeonDestinyApp {
             <div class="fade-in">
                 <h1>⚔️ Equipment Database</h1>
                 <p>Browse and manage weapons, armor, and items.</p>
-                <div id="equipmentDatabase" class="equipment-database">
-                    <!-- Equipment database will be rendered here -->
+                <div class="equipment-tabs">
+                    <button class="tab-btn active" data-tab="weapons">Weapons</button>
+                    <button class="tab-btn" data-tab="armor">Armor</button>
+                </div>
+                <div class="equipment-content">
+                    <div id="weapons" class="tab-content active">
+                        <div class="equipment-grid">
+                            ${gameData.weapons.map(weapon => `
+                                <div class="equipment-card">
+                                    <h4>${weapon.name}</h4>
+                                    <p><strong>Damage:</strong> ${weapon.damage}</p>
+                                    <p><strong>Type:</strong> ${weapon.type}</p>
+                                    <div class="properties">
+                                        ${weapon.properties.map(prop => `<span class="property-tag">${prop}</span>`).join('')}
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                    <div id="armor" class="tab-content">
+                        <div class="equipment-grid">
+                            ${gameData.armor.map(armor => `
+                                <div class="equipment-card">
+                                    <h4>${armor.name}</h4>
+                                    <p><strong>AC:</strong> ${armor.ac}</p>
+                                    <p><strong>Type:</strong> ${armor.type}</p>
+                                    <p><strong>Stealth:</strong> ${armor.stealth}</p>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
                 </div>
             </div>
         `;
 
-        // Initialize equipment database if available
-        const dbContainer = document.getElementById('equipmentDatabase');
-        if (window.equipmentDB && dbContainer) {
-            equipmentDB.init(dbContainer);
-        }
+        // Setup tab switching
+        const tabBtns = container.querySelectorAll('.tab-btn');
+        const tabContents = container.querySelectorAll('.tab-content');
+
+        tabBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const tabName = btn.dataset.tab;
+                
+                tabBtns.forEach(b => b.classList.remove('active'));
+                tabContents.forEach(c => c.classList.remove('active'));
+                
+                btn.classList.add('active');
+                container.querySelector(`#${tabName}`).classList.add('active');
+            });
+        });
     }
 
     renderTimeline(container) {
@@ -458,11 +527,11 @@ class DungeonDestinyApp {
                     <div class="playtesting-stats">
                         <div class="stat-card">
                             <h3>Test Sessions</h3>
-                            <div class="stat-value">12</div>
+                            <div class="stat-value">${gameData.playtests.length}</div>
                         </div>
                         <div class="stat-card">
                             <h3>Issues Found</h3>
-                            <div class="stat-value">8</div>
+                            <div class="stat-value">${gameData.playtests.reduce((acc, test) => acc + test.issues.length, 0)}</div>
                         </div>
                         <div class="stat-card">
                             <h3>Issues Resolved</h3>
@@ -471,20 +540,19 @@ class DungeonDestinyApp {
                     </div>
                     <div class="playtesting-log">
                         <h3>Recent Sessions</h3>
-                        <div class="session-item">
-                            <div class="session-date">Oct 5, 2025</div>
-                            <div class="session-details">
-                                <h4>Combat System Test</h4>
-                                <p>Tested new initiative mechanics with 4 players</p>
+                        ${gameData.playtests.map(test => `
+                            <div class="session-item">
+                                <div class="session-date">${new Date(test.date).toLocaleDateString()}</div>
+                                <div class="session-details">
+                                    <h4>${test.scenario}</h4>
+                                    <p>${test.feedback}</p>
+                                    <div class="session-meta">
+                                        <span>Duration: ${test.duration}</span>
+                                        <span>Participants: ${test.participants.join(', ')}</span>
+                                    </div>
+                                </div>
                             </div>
-                        </div>
-                        <div class="session-item">
-                            <div class="session-date">Oct 2, 2025</div>
-                            <div class="session-details">
-                                <h4>Character Creation Flow</h4>
-                                <p>Validated race and class selection process</p>
-                            </div>
-                        </div>
+                        `).join('')}
                     </div>
                 </div>
             </div>
