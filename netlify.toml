@@ -1,3 +1,4 @@
+# Netlify Configuration for Jekyll Site
 [build]
   publish = "_site"
   command = "bundle exec jekyll build"
