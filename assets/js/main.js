@@ -24,8 +24,10 @@ class DungeonDestinyApp {
             }, 1500);
 
             // Initialize save system
-            this.saveSystem = new DungeonDestinySaveSystem();
-            await this.saveSystem.init();
+            if (typeof DungeonDestinySaveSystem !== 'undefined') {
+                this.saveSystem = new DungeonDestinySaveSystem();
+                await this.saveSystem.init();
+            }
 
             // Setup navigation
             this.setupNavigation();
@@ -55,6 +57,7 @@ class DungeonDestinyApp {
             link.addEventListener('click', (e) => {
                 e.preventDefault();
                 const section = link.dataset.section;
+                console.log(`🗺️ Navigating to section: ${section}`);
                 this.showSection(section);
 
                 // Update active nav link
@@ -71,82 +74,78 @@ class DungeonDestinyApp {
                 switch(e.key) {
                     case 's':
                         e.preventDefault();
-                        this.saveSystem.saveData();
+                        if (this.saveSystem) this.saveSystem.saveData();
                         break;
                     case 'o':
                         e.preventDefault();
-                        this.saveSystem.loadData();
+                        if (this.saveSystem) this.saveSystem.loadData();
                         break;
                     case 'e':
                         e.preventDefault();
-                        this.saveSystem.exportData();
+                        if (this.saveSystem) this.saveSystem.exportData();
                         break;
-                }
-            }
-
-            // Section navigation shortcuts
-            if (e.altKey) {
-                const sectionMap = {
-                    '1': 'dashboard',
-                    '2': 'tasks',
-                    '3': 'character',
-                    '4': 'equipment',
-                    '5': 'timeline',
-                    '6': 'playtesting',
-                    '7': 'documentation'
-                };
-
-                if (sectionMap[e.key]) {
-                    e.preventDefault();
-                    this.showSection(sectionMap[e.key]);
                 }
             }
         });
     }
 
     setupAutoSave() {
+        if (!this.saveSystem) return;
+        
         // Auto-save every 60 seconds
         setInterval(() => {
             if (this.saveSystem && this.saveSystem.hasUnsavedChanges()) {
                 this.saveSystem.saveData(true); // Silent save
-                document.getElementById('autoSaveStatus').textContent = 
-                    `Auto-saved: ${new Date().toLocaleTimeString()}`;
+                const autoSaveStatus = document.getElementById('autoSaveStatus');
+                if (autoSaveStatus) {
+                    autoSaveStatus.textContent = `Auto-saved: ${new Date().toLocaleTimeString()}`;
+                }
             }
         }, 60000);
     }
 
     showSection(sectionName) {
+        console.log(`📝 Showing section: ${sectionName}`);
         this.currentSection = sectionName;
         const contentArea = document.getElementById('contentArea');
+        if (!contentArea) {
+            console.error('❌ Content area not found!');
+            return;
+        }
 
         // Add fade effect
         contentArea.style.opacity = '0';
 
         setTimeout(() => {
-            switch(sectionName) {
-                case 'dashboard':
-                    this.renderDashboard(contentArea);
-                    break;
-                case 'tasks':
-                    this.renderTaskManagement(contentArea);
-                    break;
-                case 'character':
-                    this.renderCharacterCreation(contentArea);
-                    break;
-                case 'equipment':
-                    this.renderEquipmentDatabase(contentArea);
-                    break;
-                case 'timeline':
-                    this.renderTimeline(contentArea);
-                    break;
-                case 'playtesting':
-                    this.renderPlaytesting(contentArea);
-                    break;
-                case 'documentation':
-                    this.renderDocumentation(contentArea);
-                    break;
-                default:
-                    contentArea.innerHTML = '<h1>Section not found</h1>';
+            try {
+                switch(sectionName) {
+                    case 'dashboard':
+                        this.renderDashboard(contentArea);
+                        break;
+                    case 'tasks':
+                        this.renderTaskManagement(contentArea);
+                        break;
+                    case 'character':
+                        this.renderCharacterCreation(contentArea);
+                        break;
+                    case 'equipment':
+                        this.renderEquipmentDatabase(contentArea);
+                        break;
+                    case 'timeline':
+                        this.renderTimeline(contentArea);
+                        break;
+                    case 'playtesting':
+                        this.renderPlaytesting(contentArea);
+                        break;
+                    case 'documentation':
+                        this.renderDocumentation(contentArea);
+                        break;
+                    default:
+                        contentArea.innerHTML = '<div class="fade-in"><h1>Section not found</h1></div>';
+                }
+            } catch (error) {
+                console.error(`❌ Error rendering section ${sectionName}:`, error);
+                contentArea.innerHTML = `<div class="fade-in"><h1>❌ Error loading ${sectionName}</h1><p>${error.message}</p></div>`;
             }
 
             contentArea.style.opacity = '1';
@@ -154,6 +153,11 @@ class DungeonDestinyApp {
     }
 
     renderDashboard(container) {
+        if (typeof gameData === 'undefined') {
+            container.innerHTML = '<div class="fade-in"><h1>❌ Game data not loaded</h1></div>';
+            return;
+        }
+
         const progress = gameData.project.progress;
         const totalTasks = gameData.tasks.length;
         const completedTasks = gameData.tasks.filter(t => t.status === 'Complete').length;
@@ -245,159 +249,51 @@ class DungeonDestinyApp {
                 </div>
             </div>
         `;
-
-        // Add dashboard-specific styles
-        this.addDashboardStyles();
-    }
-
-    addDashboardStyles() {
-        const style = document.createElement('style');
-        style.textContent = `
-            .dashboard-header {
-                text-align: center;
-                margin-bottom: 2rem;
-            }
-
-            .dashboard-header h1 {
-                font-size: 2.5rem;
-                margin-bottom: 0.5rem;
-                background: linear-gradient(45deg, var(--primary-purple), var(--primary-gold));
-                -webkit-background-clip: text;
-                -webkit-text-fill-color: transparent;
-                background-clip: text;
-            }
-
-            .project-subtitle {
-                font-size: 1.2rem;
-                color: var(--secondary-text);
-                margin-bottom: 0.25rem;
-            }
-
-            .project-lead {
-                color: var(--muted-text);
-                font-size: 0.9rem;
-            }
-
-            .dashboard-grid {
-                display: grid;
-                grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-                gap: 1.5rem;
-                margin-bottom: 2rem;
-            }
-
-            .metric-card {
-                text-align: center;
-                position: relative;
-                overflow: hidden;
-            }
-
-            .metric-card::before {
-                content: '';
-                position: absolute;
-                top: 0;
-                left: 0;
-                right: 0;
-                height: 3px;
-                background: linear-gradient(90deg, var(--primary-purple), var(--primary-gold));
-            }
-
-            .metric-value {
-                font-size: 2.5rem;
-                font-weight: bold;
-                color: var(--accent-text);
-                margin: 1rem 0;
-            }
-
-            .metric-subtitle {
-                color: var(--muted-text);
-                font-size: 0.875rem;
-            }
-
-            .milestones-list {
-                display: flex;
-                flex-direction: column;
-                gap: 1rem;
-            }
-
-            .milestone-item {
-                display: flex;
-                align-items: center;
-                gap: 1rem;
-                padding: 1rem;
-                background: var(--tertiary-bg);
-                border-radius: 8px;
-                border-left: 4px solid var(--primary-purple);
-            }
-
-            .milestone-icon {
-                font-size: 1.5rem;
-            }
-
-            .milestone-content h4 {
-                color: var(--accent-text);
-                margin-bottom: 0.25rem;
-            }
-
-            .milestone-content p {
-                color: var(--secondary-text);
-                font-size: 0.875rem;
-                margin-bottom: 0.5rem;
-            }
-
-            .milestone-date {
-                color: var(--muted-text);
-                font-size: 0.75rem;
-                font-weight: 500;
-            }
-
-            .quick-actions {
-                display: flex;
-                gap: 1rem;
-                flex-wrap: wrap;
-                justify-content: center;
-            }
-
-            @media (max-width: 768px) {
-                .dashboard-grid {
-                    grid-template-columns: 1fr;
-                }
-
-                .quick-actions {
-                    flex-direction: column;
-                }
-            }
-        `;
-
-        if (!document.getElementById('dashboard-styles')) {
-            style.id = 'dashboard-styles';
-            document.head.appendChild(style);
-        }
     }
 
     renderTaskManagement(container) {
+        console.log('📋 Rendering Task Management section...');
+        
         container.innerHTML = `
             <div class="fade-in">
                 <h1>📋 Task Management</h1>
                 <p>Drag and drop tasks between columns to update their status.</p>
-                <div id="taskBoard" class="task-board">
-                    <!-- Task board will be rendered here -->
+                <div id="taskBoard" class="task-board-container">
+                    <div class="loading-message">🔄 Loading task board...</div>
                 </div>
             </div>
         `;
 
-        // Initialize the task manager properly
+        // Initialize the task manager with better error handling
         setTimeout(() => {
             const taskBoard = document.getElementById('taskBoard');
-            if (taskBoard && window.taskManager) {
-                window.taskManager.init(taskBoard);
-            } else {
-                console.error('Task manager or task board not found');
-                taskBoard.innerHTML = '<p>⚠️ Task manager failed to load. Please refresh the page.</p>';
+            if (!taskBoard) {
+                console.error('❌ Task board container not found');
+                return;
             }
-        }, 100);
+
+            if (typeof window.taskManager !== 'undefined' && window.taskManager) {
+                console.log('✅ Task manager found, initializing...');
+                try {
+                    window.taskManager.init(taskBoard);
+                    console.log('✅ Task manager initialized successfully');
+                } catch (error) {
+                    console.error('❌ Task manager initialization failed:', error);
+                    taskBoard.innerHTML = '<div class="error-message">❌ Task manager failed to load: ' + error.message + '</div>';
+                }
+            } else {
+                console.error('❌ Task manager not found');
+                taskBoard.innerHTML = '<div class="error-message">❌ Task manager not available. Please refresh the page.</div>';
+            }
+        }, 200);
     }
 
     renderCharacterCreation(container) {
+        if (typeof gameData === 'undefined') {
+            container.innerHTML = '<div class="fade-in"><h1>❌ Game data not loaded</h1></div>';
+            return;
+        }
+
         container.innerHTML = `
             <div class="fade-in">
                 <h1>🧙‍♂️ Character Creation</h1>
@@ -438,6 +334,11 @@ class DungeonDestinyApp {
     }
 
     renderEquipmentDatabase(container) {
+        if (typeof gameData === 'undefined') {
+            container.innerHTML = '<div class="fade-in"><h1>❌ Game data not loaded</h1></div>';
+            return;
+        }
+
         container.innerHTML = `
             <div class="fade-in">
                 <h1>⚔️ Equipment Database</h1>
@@ -489,12 +390,18 @@ class DungeonDestinyApp {
                 tabContents.forEach(c => c.classList.remove('active'));
                 
                 btn.classList.add('active');
-                container.querySelector(`#${tabName}`).classList.add('active');
+                const targetTab = container.querySelector(`#${tabName}`);
+                if (targetTab) targetTab.classList.add('active');
             });
         });
     }
 
     renderTimeline(container) {
+        if (typeof gameData === 'undefined') {
+            container.innerHTML = '<div class="fade-in"><h1>❌ Game data not loaded</h1></div>';
+            return;
+        }
+
         container.innerHTML = `
             <div class="fade-in">
                 <h1>📅 Development Timeline</h1>
@@ -519,6 +426,11 @@ class DungeonDestinyApp {
     }
 
     renderPlaytesting(container) {
+        if (typeof gameData === 'undefined') {
+            container.innerHTML = '<div class="fade-in"><h1>❌ Game data not loaded</h1></div>';
+            return;
+        }
+
         container.innerHTML = `
             <div class="fade-in">
                 <h1>🎲 Playtesting Tracker</h1>
@@ -569,28 +481,28 @@ class DungeonDestinyApp {
                         <div class="doc-category">
                             <h3>📖 Player Resources</h3>
                             <ul class="doc-list">
-                                <li><a href="#">Player Handbook</a></li>
-                                <li><a href="#">Quick Start Guide</a></li>
-                                <li><a href="#">Character Sheet</a></li>
-                                <li><a href="#">Rules Reference</a></li>
+                                <li><a href="#" onclick="alert('Document not yet available')">Player Handbook</a></li>
+                                <li><a href="#" onclick="alert('Document not yet available')">Quick Start Guide</a></li>
+                                <li><a href="#" onclick="alert('Document not yet available')">Character Sheet</a></li>
+                                <li><a href="#" onclick="alert('Document not yet available')">Rules Reference</a></li>
                             </ul>
                         </div>
                         <div class="doc-category">
                             <h3>🎭 GM Resources</h3>
                             <ul class="doc-list">
-                                <li><a href="#">GM Guide</a></li>
-                                <li><a href="#">Monster Manual</a></li>
-                                <li><a href="#">Adventure Templates</a></li>
-                                <li><a href="#">Session Tools</a></li>
+                                <li><a href="#" onclick="alert('Document not yet available')">GM Guide</a></li>
+                                <li><a href="#" onclick="alert('Document not yet available')">Monster Manual</a></li>
+                                <li><a href="#" onclick="alert('Document not yet available')">Adventure Templates</a></li>
+                                <li><a href="#" onclick="alert('Document not yet available')">Session Tools</a></li>
                             </ul>
                         </div>
                         <div class="doc-category">
                             <h3>🔧 Development</h3>
                             <ul class="doc-list">
-                                <li><a href="#">Design Document</a></li>
-                                <li><a href="#">API Reference</a></li>
-                                <li><a href="#">Changelog</a></li>
-                                <li><a href="#">Contributing Guide</a></li>
+                                <li><a href="#" onclick="alert('Document not yet available')">Design Document</a></li>
+                                <li><a href="#" onclick="alert('Document not yet available')">API Reference</a></li>
+                                <li><a href="#" onclick="alert('Document not yet available')">Changelog</a></li>
+                                <li><a href="#" onclick="alert('Document not yet available')">Contributing Guide</a></li>
                             </ul>
                         </div>
                     </div>
@@ -601,6 +513,8 @@ class DungeonDestinyApp {
 
     showNotification(message, type = 'info', duration = 3000) {
         const container = document.getElementById('notificationContainer');
+        if (!container) return;
+        
         const notification = document.createElement('div');
         notification.className = `notification ${type}`;
         notification.innerHTML = `
@@ -618,7 +532,11 @@ class DungeonDestinyApp {
         // Hide and remove notification
         setTimeout(() => {
             notification.classList.remove('show');
-            setTimeout(() => container.removeChild(notification), 300);
+            setTimeout(() => {
+                if (container.contains(notification)) {
+                    container.removeChild(notification);
+                }
+            }, 300);
         }, duration);
     }
 
@@ -636,6 +554,7 @@ class DungeonDestinyApp {
 // Initialize app when DOM is loaded
 let app;
 document.addEventListener('DOMContentLoaded', () => {
+    console.log('🏁 DOM Content Loaded - Starting app initialization');
     app = new DungeonDestinyApp();
     app.init();
 });
