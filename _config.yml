@@ -2,7 +2,7 @@
 title: Dungeon Destiny Dashboard
 description: Interactive development management dashboard for Dungeon Destiny tabletop RPG Phase 2 implementation
 baseurl: ""
-url: "https://odaat1991.github.io"
+url: "https://odaat1991-glitch.github.io"
 
 # Build settings
 markdown: kramdown
@@ -28,7 +28,7 @@ plugins:
 # Custom variables
 author: Martin Acosta
 email: odaat1991@gmail.com
-github_username: odaat1991
+github_username: odaat1991-glitch
 
 # SEO and social
 twitter_username: 

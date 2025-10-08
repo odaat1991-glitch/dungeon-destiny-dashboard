@@ -47,7 +47,7 @@ dungeon-destiny-dashboard/
 
 ## 🌐 Your Live Dashboard URL
 
-**https://odaat1991.github.io/dungeon-destiny-dashboard/**
+**https://odaat1991-glitch.github.io/dungeon-destiny-dashboard/**
 
 Available 5-10 minutes after deployment!
 
