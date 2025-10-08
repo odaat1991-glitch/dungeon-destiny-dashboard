@@ -382,9 +382,11 @@ class DungeonDestinyApp {
             </div>
         `;
 
-        // Initialize task board (placeholder)
-        document.getElementById('taskBoard').innerHTML = 
-            '<p class="placeholder">Task management interface loading...</p>';
+        // Initialize the actual task manager
+        const taskBoard = document.getElementById('taskBoard');
+        if (window.taskManager && taskBoard) {
+            taskManager.init(taskBoard);
+        }
     }
 
     renderCharacterCreation(container) {
@@ -397,6 +399,12 @@ class DungeonDestinyApp {
                 </div>
             </div>
         `;
+
+        // Initialize character creator if available
+        const creatorContainer = document.getElementById('characterCreator');
+        if (window.characterCreator && creatorContainer) {
+            characterCreator.init(creatorContainer);
+        }
     }
 
     renderEquipmentDatabase(container) {
@@ -409,6 +417,12 @@ class DungeonDestinyApp {
                 </div>
             </div>
         `;
+
+        // Initialize equipment database if available
+        const dbContainer = document.getElementById('equipmentDatabase');
+        if (window.equipmentDB && dbContainer) {
+            equipmentDB.init(dbContainer);
+        }
     }
 
     renderTimeline(container) {
@@ -417,7 +431,19 @@ class DungeonDestinyApp {
                 <h1>📅 Development Timeline</h1>
                 <p>Track milestones and project deadlines.</p>
                 <div id="timelineView" class="timeline-view">
-                    <!-- Timeline will be rendered here -->
+                    <div class="timeline-container">
+                        ${gameData.milestones.map((milestone, index) => `
+                            <div class="timeline-item">
+                                <div class="timeline-marker ${milestone.priority.toLowerCase()}"></div>
+                                <div class="timeline-content">
+                                    <h3>${milestone.name}</h3>
+                                    <p>${milestone.description}</p>
+                                    <span class="timeline-date">${new Date(milestone.date).toLocaleDateString()}</span>
+                                    <span class="timeline-priority priority-${milestone.priority.toLowerCase()}">${milestone.priority} Priority</span>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
                 </div>
             </div>
         `;
@@ -429,7 +455,37 @@ class DungeonDestinyApp {
                 <h1>🎲 Playtesting Tracker</h1>
                 <p>Record test sessions, feedback, and issues.</p>
                 <div id="playtestingTracker" class="playtesting-tracker">
-                    <!-- Playtesting tracker will be rendered here -->
+                    <div class="playtesting-stats">
+                        <div class="stat-card">
+                            <h3>Test Sessions</h3>
+                            <div class="stat-value">12</div>
+                        </div>
+                        <div class="stat-card">
+                            <h3>Issues Found</h3>
+                            <div class="stat-value">8</div>
+                        </div>
+                        <div class="stat-card">
+                            <h3>Issues Resolved</h3>
+                            <div class="stat-value">5</div>
+                        </div>
+                    </div>
+                    <div class="playtesting-log">
+                        <h3>Recent Sessions</h3>
+                        <div class="session-item">
+                            <div class="session-date">Oct 5, 2025</div>
+                            <div class="session-details">
+                                <h4>Combat System Test</h4>
+                                <p>Tested new initiative mechanics with 4 players</p>
+                            </div>
+                        </div>
+                        <div class="session-item">
+                            <div class="session-date">Oct 2, 2025</div>
+                            <div class="session-details">
+                                <h4>Character Creation Flow</h4>
+                                <p>Validated race and class selection process</p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         `;
@@ -441,7 +497,35 @@ class DungeonDestinyApp {
                 <h1>📚 Documentation Hub</h1>
                 <p>Access player handbooks, GM guides, and development docs.</p>
                 <div id="documentationHub" class="documentation-hub">
-                    <!-- Documentation hub will be rendered here -->
+                    <div class="doc-categories">
+                        <div class="doc-category">
+                            <h3>📖 Player Resources</h3>
+                            <ul class="doc-list">
+                                <li><a href="#">Player Handbook</a></li>
+                                <li><a href="#">Quick Start Guide</a></li>
+                                <li><a href="#">Character Sheet</a></li>
+                                <li><a href="#">Rules Reference</a></li>
+                            </ul>
+                        </div>
+                        <div class="doc-category">
+                            <h3>🎭 GM Resources</h3>
+                            <ul class="doc-list">
+                                <li><a href="#">GM Guide</a></li>
+                                <li><a href="#">Monster Manual</a></li>
+                                <li><a href="#">Adventure Templates</a></li>
+                                <li><a href="#">Session Tools</a></li>
+                            </ul>
+                        </div>
+                        <div class="doc-category">
+                            <h3>🔧 Development</h3>
+                            <ul class="doc-list">
+                                <li><a href="#">Design Document</a></li>
+                                <li><a href="#">API Reference</a></li>
+                                <li><a href="#">Changelog</a></li>
+                                <li><a href="#">Contributing Guide</a></li>
+                            </ul>
+                        </div>
+                    </div>
                 </div>
             </div>
         `;
